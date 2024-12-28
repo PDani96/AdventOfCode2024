@@ -1,5 +1,5 @@
 # path to input file
-file = open(r"F:\Users\prest\Documents\Projects\AdventOfCode2024\Day1\ids.txt")
+file = open(r"ids.txt")
 
 def find_similarity(file):
     # placeholder for similarity value
