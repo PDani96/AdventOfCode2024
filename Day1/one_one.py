@@ -1,5 +1,5 @@
 # path to input file
-file = open(r"F:\Users\prest\Documents\Projects\AdventOfCode2024\Day1\input.txt")
+file = open(r"F:\Users\prest\Documents\Projects\AdventOfCode2024\Day1\ids.txt")
 
 def find_distance(file):
     # placeholder for distance value
