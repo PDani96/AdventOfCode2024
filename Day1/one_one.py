@@ -25,4 +25,4 @@ def find_distance(file):
 
 find_distance(file)
 
-
+# ANSWER: 1873376 (varies with input file)

@@ -21,4 +21,4 @@ def find_similarity(file):
 
 find_similarity(file)
 
-
+# ANSWER: 18997088 (varies with input file)

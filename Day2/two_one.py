@@ -65,4 +65,6 @@ def safety_test(file):
 
 safety_test(file)
 
+# ANSWER: 287 (varies with input file)
+
 
