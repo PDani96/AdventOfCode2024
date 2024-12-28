@@ -1,21 +1,17 @@
-file = open(r"F:\Users\prest\Documents\Projects\AdventOfCode2024\Day1\ids.txt")
+# path to input file
+file = open(r"reports.txt")
 
-def find_distance(file):
-    distance = 0
+def safety_test(file):
+    # placeholder for number of safe reports
+    passes = 0
+    # read input file into list split by newlines
     lines = file.readlines()
 
-    pairs = [[int(id.strip()) for id in line.split("   ")] for line in lines]
+    # create 1xN list of reports containing N levels split by whitespace and strip newline characters
+    reports = [[int(level.strip()) for level in line.split(' ')] for line in lines]
 
-    ids1, ids2 = [pair[0] for pair in pairs], [pair[1] for pair in pairs]
+    print(reports)
 
-    ids1.sort()
-    ids2.sort()
-
-    for i, id in enumerate(ids1):
-        distance += abs(id - ids2[i])
-
-    print(distance)
-
-find_distance(file)
+safety_test(file)
 
 
