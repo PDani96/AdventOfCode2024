@@ -1,7 +1,7 @@
 import os
 
 # path to input file
-file = open(fr"{os.getcwd()}\Day2\reports.txt")
+file = open(fr"{os.getcwd()}\reports.txt")
 
 def safety_test(file):
     # placeholder for number of safe reports

@@ -1,7 +1,7 @@
 import os
 
 # path to input file
-file = open(fr"{os.getcwd()}\Day1\ids.txt")
+file = open(fr"{os.getcwd()}\ids.txt")
 
 def find_similarity(file):
     # placeholder for similarity value
