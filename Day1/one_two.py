@@ -23,4 +23,5 @@ def find_similarity(file):
 
 find_similarity(file)
 
+# https://adventofcode.com/2024/day/1
 # ANSWER: 18997088 (varies with input file)

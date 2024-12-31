@@ -1,5 +1,4 @@
 import os
-import re
 
 # path to input file
 file = open(fr"{os.getcwd()}\word_search.txt")
@@ -37,6 +36,7 @@ def find_mas_x(file):
 
 find_mas_x(file)
 
+# https://adventofcode.com/2024/day/4
 # ANSWER: 1923 (varies with input file)
 
 

@@ -50,6 +50,7 @@ def scan_memory_conditional(file):
 
 scan_memory_conditional(file)
 
+# https://adventofcode.com/2024/day/3
 # ANSWER: 102467299 (varies with input file)
 
 

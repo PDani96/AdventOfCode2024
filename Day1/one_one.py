@@ -27,4 +27,5 @@ def find_distance(file):
 
 find_distance(file)
 
+# https://adventofcode.com/2024/day/1
 # ANSWER: 1873376 (varies with input file)

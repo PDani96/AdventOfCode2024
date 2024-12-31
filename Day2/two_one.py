@@ -67,6 +67,7 @@ def safety_test(file):
 
 safety_test(file)
 
+# https://adventofcode.com/2024/day/2
 # ANSWER: 287 (varies with input file)
 
 

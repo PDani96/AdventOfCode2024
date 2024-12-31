@@ -1,5 +1,4 @@
 import os
-import re
 
 # path to input file
 file = open(fr"{os.getcwd()}\word_search.txt")
@@ -67,6 +66,7 @@ def find_xmas(file):
 
 find_xmas(file)
 
+# https://adventofcode.com/2024/day/4
 # ANSWER: 2504 (varies with input file)
 
 

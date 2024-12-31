@@ -28,6 +28,7 @@ def scan_memory(file):
 
 scan_memory(file)
 
+# https://adventofcode.com/2024/day/3
 # ANSWER: 178538786 (varies with input file)
 
 
