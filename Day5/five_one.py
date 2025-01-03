@@ -13,10 +13,10 @@ def verify_updates(file):
     # split by newlines to separate rules from updates
     split_instructions = printing_instructions.split('\n\n')
     # split by newline to separate rules and pipes to separate pages in a rule
-    # (using sets and tuples for efficiency because these should not be changed, and duplicate rules are unwanted).
+    # (using sets and tuples for efficiency because these should not be changed, and duplicate rules are unwanted)
     rules = set(tuple(rule.split('|')) for rule in split_instructions[0].split('\n'))
     # split by newlines to separate updates and commas to separate pages in an update
-    # (using tuples for efficiency because these should not be changed).
+    # (using tuples for efficiency because these should not be changed)
     updates = tuple(tuple(update.split(',')) for update in split_instructions[1].split('\n'))
 
     # create a set of keys for rules for faster lookup

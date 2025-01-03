@@ -36,7 +36,7 @@ def find_mas_x(file):
 
 find_mas_x(file)
 
-# https://adventofcode.com/2024/day/4
+# https://adventofcode.com/2024/day/4#part2
 # ANSWER: 1923 (varies with input file)
 
 

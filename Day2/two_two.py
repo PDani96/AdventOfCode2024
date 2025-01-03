@@ -116,7 +116,7 @@ def safety_test_dampener(file):
 
 safety_test_dampener(file)
 
-# https://adventofcode.com/2024/day/2
+# https://adventofcode.com/2024/day/2#part2
 # ANSWER: 354 (varies with input file)
 
 
