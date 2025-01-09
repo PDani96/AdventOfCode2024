@@ -6,122 +6,150 @@
 
 using namespace std;
 
-void move(string &direction, int &x, int &y, vector<string> &map, int &breadcrumbs) {
-    if (direction == "up") {
-        if(map[y-1][x] != '#') {
-            // check if there is already a breadcrumb
-            if(map[y-1][x] != 'X'){
-                // drop breadcrumb
-                map[y-1][x] = 'X';
-                breadcrumbs += 1;
+// input file
+const string FILENAME = "map.txt";
+
+// Guard class tracks guard's position, direction, and amount of breadcrumbs dropped
+class Guard {
+    public:
+        // class members
+        pair<int, int> location;
+        string direction;
+        int breadcrumbs;
+
+        // constructor always initializes guard facing up with 1 breadcrumb dropped at current location
+        Guard(pair<int, int> origin)
+            : location(origin), direction("up"), breadcrumbs(1) {}
+
+        // function to move the guard to the next valid position
+        void move(vector<string>& grid) {
+            // assignment for better readability
+            auto& x = location.first;
+            auto& y = location.second;
+
+            // check if guard is headed up
+            if (direction == "up") {
+                // check that there is no obstacle
+                if(grid[y-1][x] != '#') {
+                    // check if there is already a breadcrumb
+                    if(grid[y-1][x] != 'X'){
+                        // drop breadcrumb
+                        grid[y-1][x] = 'X';
+                        breadcrumbs++;
+                    }
+                    // step up
+                    y -= 1;
+                } else { // obstacle encountered
+                    // turn +90 degrees
+                    direction = "right";
+                    // try to move again
+                    move(grid);
+                }
+            } else if (direction == "right") { // check if the guard is headed right
+                // check that there is no obstacle
+                if(grid[y][x+1] != '#') {
+                    // check if there is already a breadcrumb
+                    if(grid[y][x+1] != 'X'){
+                        // drop breadcrumb
+                        grid[y][x+1] = 'X';
+                        breadcrumbs++;
+                    }
+                    // step right
+                    x += 1;
+                } else { // obstacle encountered
+                    // turn +90 degrees
+                    direction = "down";
+                    // try to move again
+                    move(grid);
+                }
+            } else if (direction == "down") { // check if the guard is headed down
+                // check that there is no obstacle
+                if(grid[y+1][x] != '#') {
+                    // check if there is already a breadcrumb
+                    if(grid[y+1][x] != 'X'){
+                        // drop breadcrumb
+                        grid[y+1][x] = 'X';
+                        breadcrumbs++;
+                    }
+                    // step down
+                    y += 1;
+                } else { // obstacle ancountered
+                    // turn +90 degrees
+                    direction = "left";
+                    // try to move again
+                    move(grid);
+                }
+            } else if (direction == "left") { // check if the guard is headed left
+                // check that there is no obstacle
+                if(grid[y][x-1] != '#') {
+                    // check if there is already a breadcrumb
+                    if(grid[y][x-1] != 'X'){
+                        // drop breadcrumb
+                        grid[y][x-1] = 'X';
+                        breadcrumbs++;
+                    }
+                    // step left
+                    x -= 1;
+                } else {
+                    // turn +90 degrees
+                    direction = "up";
+                    // try to move again
+                    move(grid);
+                }
             }
-            // step up
-            y -= 1;
-        } else {
-            // turn +90 degrees
-            direction = "right";
-            // try to move again
-            move(direction, x, y, map, breadcrumbs);
         }
-    } else if (direction == "right") {
-        if(map[y][x+1] != '#') {
-            // check if there is already a breadcrumb
-            if(map[y][x+1] != 'X'){
-                // drop breadcrumb
-                map[y][x+1] = 'X';
-                breadcrumbs += 1;
+};
+
+// Laboratory class loads data from input file into a grid and tracks the guard within the grid
+class Laboratory {
+    public:
+        // class members
+        vector<string> grid;
+        Guard guard;
+        
+        // Constructor initializes guard and loads data from file
+        Laboratory(const string FILENAME) : guard({0, 0}) {
+            loadData(FILENAME);
+            // drop breadcrumb at origin
+            grid[guard.location.second][guard.location.first] = 'X';
+        }
+
+        void loadData(string filename) {
+            // place holder for each line of data read in
+            string line;
+            // read file
+            ifstream file(filename);
+
+            // collect all lines of data into one map vector
+            while(getline(file, line)) {
+                // record the current line
+                grid.push_back(line);
+
+                // check if the guard is on this line
+                if(line.find('^') != string::npos) {
+                    // find and initialize guard
+                    guard = Guard({line.find('^'), grid.size() - 1});
+                }
             }
-            // step right
-            x += 1;
-        } else {
-            // turn +90 degrees
-            direction = "down";
-            // try to move again
-            move(direction, x, y, map, breadcrumbs);
         }
-    } else if (direction == "down") {
-        if(map[y+1][x] != '#') {
-            // check if there is already a breadcrumb
-            if(map[y+1][x] != 'X'){
-                // drop breadcrumb
-                map[y+1][x] = 'X';
-                breadcrumbs += 1;
-            }
-            // step down
-            y += 1;
-        } else {
-            // turn +90 degrees
-            direction = "left";
-            // try to move again
-            move(direction, x, y, map, breadcrumbs);
-        }
-    } else if (direction == "left") {
-        if(map[y][x-1] != '#') {
-            // check if there is already a breadcrumb
-            if(map[y][x-1] != 'X'){
-                // drop breadcrumb
-                map[y][x-1] = 'X';
-                breadcrumbs += 1;
-            }
-            // step left
-            x -= 1;
-        } else {
-            // turn +90 degrees
-            direction = "up";
-            // try to move again
-            move(direction, x, y, map, breadcrumbs);
-        }
-    }
-}
+};
 
 int main() {
-    // read file
-    ifstream file("map.txt");
+    // initialize lab
+    Laboratory lab(FILENAME);
 
-    // place holder for each line of data read in
-    string line;
-    // place holder coordinates for guard location
-    int x = 0;
-    int y = 0;
-    // initialize breadcrumb counter
-    int breadcrumbs = 0;
-    // vector of strings to store file contents
-    vector<string> map;
+    // variables for easy access
+    auto& x = lab.guard.location.first;
+    auto& y = lab.guard.location.second;
+    auto& grid = lab.grid;
 
-    // collect all lines of data into one map vector
-    while(getline(file, line)) {
-        // record the current line
-        map.push_back(line);
-
-        // check if the guard is on this line
-        if(line.find('^') != string::npos) {
-            // save x-coordinate of guard
-            x = line.find('^');
-            // save y-coordinate of guard
-            y = map.size() - 1;
-            // drop breadcrumb
-            map[y][x] = 'X';
-            breadcrumbs += 1;
-        }
+    // as long as the guard stays within the lab, keep moving
+    while(y > 0 && x > 0 && y < grid.size() - 1 && x < grid[y].size() - 1) {
+        lab.guard.move(grid);
     }
-
-    // close file
-    file.close();
-
-    // set guard's initial direction
-    string direction = "up";
-
-    while(y > 0 && x > 0 && y < map.size() - 1 && x < map[y].size() - 1) {
-        move(direction, x, y, map, breadcrumbs);
-    }
-
-    // print map
-    // for(string line : map) {
-    //     cout << line << endl;
-    // }
 
     // print breadcrumb count
-    cout << "Breadcrumbs: " << breadcrumbs << endl;
+    cout << "Breadcrumbs: " << lab.guard.breadcrumbs << endl;
 
     return 0;
 
