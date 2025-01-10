@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <format>
 
 using namespace std;
 
@@ -15,6 +16,10 @@ class Guard {
         // class members
         pair<int, int> location;
         string direction;
+        // create flag for if guard is retracing previous steps
+        bool retracing = false;
+        // create flag for guard being stuck in loop
+        bool looping = false;
 
         // constructor always initializes guard facing up 
         Guard(pair<int, int> origin)
@@ -29,18 +34,30 @@ class Guard {
             // check if guard is headed up
             if (direction == "up") {
                 // check that there is no obstacle
-                if(grid[y-1][x] != '#') {
-                    // check if guard has visited this position before
+                if(grid[y-1][x] != '#' && grid[y-1][x] != 'O') {
+                    // check if guard has not visited this position before
                     if(grid[y-1][x] == '.'){
                         // drop up/down breadcrumb
                         grid[y-1][x] = '|';
-                    } else if(grid[y-1][x] == '='){ 
-                        // paths have crossed drop intersection breadcrumb
+                        // reset retracing flag
+                        retracing = false;
+                    } else if(grid[y-1][x] == '-'){ 
+                        // paths have crossed, drop intersection breadcrumb
                         grid[y-1][x] = '+';
-                    } // otherwise don't drop breadcrumb
+                        // reset retracing flag
+                        retracing = false;
+                    } else {
+                        // otherwise the guard is retracing a previous path
+                        retracing = true;
+                    }
                     // step up
                     y -= 1;
-                } else { // obstacle encountered
+                } else if(retracing && (grid[y][x+1] == '-' || grid[y][x+1] == '+')) { // previous obstacle encountered
+                    cout << "looping!" << endl;
+                    looping = true;
+                    return;
+                } else { // new obstacle encountered
+                    cout << "Obstacle encountered!" << endl;
                     // turn +90 degrees
                     direction = "right";
                     // guard must turn, drop intersection breadcrumb first
@@ -49,19 +66,30 @@ class Guard {
                     move(grid);
                 }
             } else if (direction == "right") { // check if the guard is headed right
-                // check that there is no obstacle
-                if(grid[y][x+1] != '#') {
+                // check that there is no obstacle2
+                if(grid[y][x+1] != '#' && grid[y][x+1] != 'O') {
                     // check if guard has visited this position before
                     if(grid[y][x+1] == '.'){
                         // drop left/right breadcrumb
-                        grid[y][x+1] = '=';
+                        grid[y][x+1] = '-';
+                        // reset retracing flag
+                        retracing = false;
                     } else if(grid[y][x+1] == '|'){
-                        // paths have crossed drop intersection breadcrumb
+                        // paths have crossed, drop intersection breadcrumb
                         grid[y][x+1] = '+';
-                    } // otherwise don't drop breadcrumb
+                        // reset retracing flag
+                        retracing = false;
+                    } else {
+                        // otherwise the guard is retracing a previous path
+                        retracing = true;
+                    }
                     // step right
                     x += 1;
-                } else { // obstacle encountered
+                } else if(retracing && (grid[y+1][x] == '|' || grid[y+1][x] == '+')) { // previous obstacle encountered
+                    cout << "looping!" << endl;
+                    looping = true;
+                    return;
+                } else { // new obstacle encountered
                     // turn +90 degrees
                     direction = "down";
                     // guard must turn, drop intersection breadcrumb first
@@ -71,18 +99,29 @@ class Guard {
                 }
             } else if (direction == "down") { // check if the guard is headed down
                 // check that there is no obstacle
-                if(grid[y+1][x] != '#') {
+                if(grid[y+1][x] != '#' && grid[y+1][x] != 'O') {
                     // check if guard has visited this position before
                     if(grid[y+1][x] == '.'){
                         // drop up/down breadcrumb
                         grid[y+1][x] = '|';
-                    } else if(grid[y+1][x] == '='){
-                        // paths have crossed drop intersection breadcrumb
+                        // reset retracing flag
+                        retracing = false;
+                    } else if(grid[y+1][x] == '-'){
+                        // paths have crossed, drop intersection breadcrumb
                         grid[y+1][x] = '+';
-                    } // otherwise don't drop breadcrumb
+                        // reset retracing flag
+                        retracing = false;
+                    } else {
+                        // otherwise the guard is retracing a previous path
+                        retracing = true;
+                    }
                     // step down
                     y += 1;
-                } else { // obstacle ancountered
+                } else if(retracing && (grid[y][x-1] == '-' || grid[y][x-1] == '+')) { // previous obstacle encountered
+                    cout << "looping!" << endl;
+                    looping = true;
+                    return;
+                } else { // new obstacle encountered
                     // turn +90 degrees
                     direction = "left";
                     // guard must turn, drop intersection breadcrumb first
@@ -92,17 +131,28 @@ class Guard {
                 }
             } else if (direction == "left") { // check if the guard is headed left
                 // check that there is no obstacle
-                if(grid[y][x-1] != '#') {
+                if(grid[y][x-1] != '#' && grid[y][x-1] != 'O') {
                     // check if guard has visited this position before
                     if(grid[y][x-1] == '.'){
                         // drop left/right breadcrumb
-                        grid[y][x-1] = '=';
+                        grid[y][x-1] = '-';
+                        // reset retracing flag
+                        retracing = false;
                     } else if(grid[y][x-1] == '|'){
-                        // paths have crossed drop intersection breadcrumb
+                        // paths have crossed, drop intersection breadcrumb
                         grid[y][x-1] = '+';
-                    } // otherwise don't drop breadcrumb
+                        // reset retracing flag
+                        retracing = false;
+                    } else {
+                        // otherwise the guard is retracing a previous path
+                        retracing = true;
+                    }
                     // step left
                     x -= 1;
+                } else if(retracing && (grid[y-1][x] == '-' || grid[y-1][x] == '+')) { // previous obstacle encountered
+                    cout << "looping!" << endl;
+                    looping = true;
+                    return;
                 } else {
                     // turn +90 degrees
                     direction = "up";
@@ -132,7 +182,7 @@ class Laboratory {
         Laboratory(const string FILENAME) : guard({0, 0}) {
             loadData(FILENAME);
             // drop breadcrumb at origin
-            grid[guard.location.second][guard.location.first] = 'X';
+            grid[guard.location.second][guard.location.first] = '|';
         }
 
         void loadData(string filename) {
@@ -154,8 +204,22 @@ class Laboratory {
             }
         }
 
-        void placeObstacle(int x, int y){
-            grid[y][x] = 'O';
+        void placeObstacleAhead(){
+            auto& x = guard.location.first;
+            auto& y = guard.location.second;
+
+            if(guard.direction == "up"){
+                grid[y-1][x] = 'O';
+            }
+            if(guard.direction == "right"){
+                grid[y][x+1] = 'O';
+            }
+            if(guard.direction == "down"){
+                grid[y+1][x] = 'O';
+            }
+            if(guard.direction == "left"){
+                grid[y][x-1] = 'O';
+            }
         }
 
         void printMap(){
@@ -169,6 +233,8 @@ int main() {
     // initialize lab
     Laboratory lab(FILENAME);
 
+    int loops = 0;
+
     // variables for easy access
     auto& x = lab.guard.location.first;
     auto& y = lab.guard.location.second;
@@ -176,10 +242,28 @@ int main() {
 
     // as long as the guard stays within the lab, keep moving
     while(y > 0 && x > 0 && y < grid.size() - 1 && x < grid[y].size() - 1) {
+        Laboratory tempLab = lab;
+        auto& tempX = tempLab.guard.location.first;
+        auto& tempY = tempLab.guard.location.second;
+        auto& tempGrid = tempLab.grid;
+
+        tempLab.placeObstacleAhead();
+
+        while(tempY > 0 && tempX > 0 && tempY < tempGrid.size() - 1 && tempX < tempGrid[tempY].size() - 1) {
+            tempLab.guard.move(tempGrid);
+            if(tempLab.guard.looping){
+                cout << "Guard Looping" << endl;
+                loops++;
+                break;
+            }
+        }
+
         lab.guard.move(grid);
     }
 
     lab.printMap();
+
+    cout << loops << endl;
 
     return 0;
 
